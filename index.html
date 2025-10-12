@@ -1,0 +1,110 @@
+// index.html
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loading Game Style → Home.jsx</title>
+<style>
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+body {
+height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+background: radial-gradient(circle at 50% 30%, #1e293b, #0f172a);
+color: white;
+font-family: 'Poppins', sans-serif;
+overflow: hidden;
+}
+.loader {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 20px;
+}
+.bar-container {
+width: 280px;
+height: 16px;
+border: 2px solid #38bdf8;
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 0 10px #38bdf8;
+}
+.bar-fill {
+width: 0%;
+height: 100%;
+background: linear-gradient(90deg, #38bdf8, #3b82f6);
+animation: fill 4s ease-in-out forwards;
+}
+@keyframes fill {
+from { width: 0%; }
+to { width: 100%; }
+}
+h1 {
+font-size: 1.5rem;
+letter-spacing: 1px;
+text-shadow: 0 0 10px rgba(56,189,248,0.6);
+}
+.game-logo {
+font-size: 2rem;
+font-weight: 700;
+letter-spacing: 2px;
+color: #60a5fa;
+text-shadow: 0 0 20px #60a5fa;
+margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+<div class="loader">
+<div class="game-logo">⚡ Loading Game ⚡</div>
+<h1>Se încarcă lumea...</h1>
+<div class="bar-container"><div class="bar-fill"></div></div>
+</div>
+
+
+<script>
+// Așteaptă 1-5 secunde înainte de redirecționare către Home.jsx (simulare)
+const delay = Math.random() * 4000 + 1000; // între 1 și 5 secunde
+setTimeout(() => {
+window.location.href = 'Home.html'; // sau Home.jsx într-un mediu React
+}, delay);
+</script>
+</body>
+</html>
+
+
+<!-- Home.html (poți înlocui cu componenta React Home.jsx dacă folosești Vite sau CRA) -->
+<!--
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home</title>
+<style>
+body {
+background: linear-gradient(135deg, #0f172a, #1e293b);
+color: #fff;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100vh;
+font-family: 'Poppins', sans-serif;
+}
+h1 { font-size: 2rem; color: #38bdf8; }
+p { font-size: 1.1rem; opacity: 0.9; }
+</style>
+</head>
+<body>
+<h1>Bine ai venit în Home!</h1>
+<p>Încărcarea s-a terminat. Distracție plăcută 🎮</p>
+</body>
+</html>
