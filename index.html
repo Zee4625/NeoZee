@@ -51,7 +51,10 @@ body.breach::after{content:"";position:fixed;inset:0;border:4px solid var(--r);b
 button.b{transition:background .15s,color .15s,transform .1s}button.b:active{transform:translateY(1px)}button.b:disabled{opacity:.45;cursor:not-allowed}
 button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--c);outline-offset:2px}
 a[target]:hover{background:var(--c);color:#000}
-html[data-theme="mono"]:root{--g:#ededed;--c:#ffffff;--r:#ffffff;--y:#cfcfcf;filter:grayscale(1) brightness(1.18) contrast(1.12)}
+html[data-theme="mono"]{--g:#ededed;--c:#ffffff;--r:#ffffff;--y:#cfcfcf;filter:grayscale(1) brightness(1.18) contrast(1.12)}
+html[data-theme="purple"]{--g:#c084fc;--c:#e879f9;--r:#f472b6;--y:#f0abfc}
+html[data-theme="red"]{--g:#ff3355;--c:#ff6b8a;--r:#ff003c;--y:#ffaa00}
+html[data-theme="purple"] body::before,html[data-theme="red"] body::before{opacity:.9}
 body{min-height:100vh;min-height:100dvh}
 @media (min-width:1600px){html{font-size:18px}}
 @media (max-width:700px){html{font-size:15px}nav.box{flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch}nav.box>*{flex:0 0 auto;white-space:nowrap}#killBtn{margin-left:0!important}header.box h1{font-size:1rem}}
@@ -68,12 +71,12 @@ body{min-height:100vh;min-height:100dvh}
 <nav class="box flex flex-wrap gap-1 items-center" style="padding:.3rem .45rem">
   <button class="b" id="tbDash" onclick="showTab('Dash')" style="background:var(--g);color:#000">DASH</button>
   <button class="b" id="tbFiles" onclick="showTab('Files')">FILES</button>
-  <button class="b" id="tbSearch" onclick="showTab('Search')">SEARCH</button>
-  <button class="b" id="tbTerm" onclick="showTab('Term')">TERMINAL</button>
+  
+  
   <button class="b" id="tbPlanet" onclick="showTab('Planet')">MAPS</button>
-  <button class="b" id="tbNotes" onclick="showTab('Notes')">NOTES</button>
+  
   <button class="b" id="tbNet" onclick="showTab('Net')">PC &amp; NET</button>
-  <button class="b" id="tbRadar" onclick="showTab('Radar')">MOBILE RADAR</button>
+  <button class="b" id="tbRadar" onclick="showTab('Radar')">DEVICE RADAR</button>
   <span style="width:1px;height:1.4rem;background:rgba(0,255,102,.4);margin:0 .3rem"></span>
   <button class="b" id="safeBtn" onclick="toggleSafe()">SAFE: OFF</button>
   <button class="b" onclick="restart()">RESTART</button>
@@ -81,9 +84,8 @@ body{min-height:100vh;min-height:100dvh}
   <button class="b" id="thBtn" onclick="toggleTheme()">THEME: GREEN</button>
   <button class="b" id="ambBtn" onclick="ambToggle()">AMBIENT: OFF</button>
   <button class="b" onclick="fz(-1)" title="Smaller text">A−</button><button class="b" onclick="fz(1)" title="Larger text">A+</button>
-  <button class="b k" onclick="startBreach()">BREACH</button>
   <button class="b" id="wlBtn" onclick="wlToggle()">AWAKE: OFF</button>
-  <button class="b k" id="killBtn" style="margin-left:auto" onclick="shutdown()">EMERGENCY SHUTDOWN</button>
+  
 </nav>
 <div id="tDash" class="grid grid-cols-1 lg:grid-cols-12 gap-2">
   <div class="lg:col-span-3 flex flex-col gap-2">
@@ -99,9 +101,18 @@ body{min-height:100vh;min-height:100dvh}
     <div class="relative flex-1" style="min-height:260px"><div id="dormant" class="sm text-center" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.7">PLANET RADAR OFFLINE</div>
       <canvas id="plC" class="absolute inset-0 w-full h-full hidden"></canvas><div id="zones" class="absolute top-1 left-1 flex flex-col gap-1 sm hidden"></div></div></div>
   <div class="lg:col-span-3 flex flex-col gap-2">
-    <div class="box"><div class="ttl"><span>Wi-Fi Radar</span><span id="wifiSt" style="color:var(--c)">SCANNING</span></div>
+    <div class="box"><div class="ttl"><span>Wi-Fi / Link Radar</span><span id="wifiSt" style="color:var(--c)">SCANNING</span></div>
       <canvas id="wfC" class="w-full bg-black rounded" style="height:150px;border:1px solid rgba(0,238,255,.3)"></canvas>
-      <div class="grid grid-cols-2 gap-x-2 sm mt-1"><div>LINK <b id="wfLink" style="color:var(--c)">--</b></div><div>TYPE <b id="wfType" style="color:var(--c)">--</b></div><div>DOWN <b id="wfDown" style="color:var(--c)">--</b></div><div>PING <b id="wfRtt" style="color:var(--c)">--</b></div></div></div>
+      <div class="grid grid-cols-2 gap-x-2 sm mt-1">
+        <div>LINK <b id="wfLink" style="color:var(--c)">--</b></div>
+        <div>TYPE <b id="wfType" style="color:var(--c)">--</b></div>
+        <div>DOWN <b id="wfDown" style="color:var(--c)">--</b></div>
+        <div>PING <b id="wfRtt" style="color:var(--c)">--</b></div>
+        <div>EFF <b id="wfEff" style="color:var(--c)">--</b></div>
+        <div>SAVE <b id="wfSave" style="color:var(--c)">--</b></div>
+      </div>
+      <div class="sm mt-1" style="opacity:.75">Real link data from Network Information API + live ping. Browsers cannot list nearby Wi-Fi SSIDs for privacy.</div>
+    </div>
 
   </div>
   <div class="lg:col-span-12 box"><div class="ttl"><span>File Scan // Vault · Local Files</span><span id="fsScanSt" style="color:var(--c)">IDLE</span></div>
@@ -156,11 +167,11 @@ body{min-height:100vh;min-height:100dvh}
     <div class="sm mt-2" style="opacity:.75">Ping and speed are measured to the server hosting this page. Wi-Fi name and signal strength can't be read by web pages.</div></div>
 </div>
 <div id="tRadar" class="grid grid-cols-1 lg:grid-cols-12 gap-2" style="display:none">
-  <div class="lg:col-span-7 box"><div class="ttl"><span>Mobile Radar</span><span id="mrSt" style="color:var(--c)">IDLE</span></div>
+  <div class="lg:col-span-7 box"><div class="ttl"><span>Device Radar · Phones · BLE · Gadgets</span><span id="mrSt" style="color:var(--c)">IDLE</span></div>
     <canvas id="mrC" class="w-full bg-black rounded" style="height:56vh;min-height:300px;border:1px solid rgba(0,238,255,.3)"></canvas>
-    <div id="mrClosest" class="sm mt-2">No devices yet. Add a nearby phone with ADD DEVICE, or try DEMO.</div>
-    <div class="flex flex-wrap gap-2 mt-2"><button class="b" onclick="btAdd()">ADD DEVICE (BLUETOOTH)</button><button class="b" onclick="mrDemo()">DEMO</button><button class="b" onclick="mrInspect(mrClosest())">INSPECT CLOSEST</button><button class="b k" onclick="mrClear()">CLEAR</button></div>
-    <div class="sm mt-2" style="opacity:.85">Distance is estimated from Bluetooth signal strength, so it is rough (walls and bodies change it). A web page cannot tell which direction a device is in, so blips are placed by angle for display only. You choose each device in the browser's own Bluetooth picker; nothing is scanned silently. DEMO shows simulated phones.</div></div>
+    <div id="mrClosest" class="sm mt-2">No devices yet. ADD DEVICE (Bluetooth) for phones / earbuds / watches / BLE gadgets, or try DEMO.</div>
+    <div class="flex flex-wrap gap-2 mt-2"><button class="b" onclick="btAdd()">ADD DEVICE (PHONE / BLE)</button><button class="b" onclick="mrDemo()">DEMO</button><button class="b" onclick="mrInspect(mrClosest())">INSPECT CLOSEST</button><button class="b k" onclick="mrClear()">CLEAR</button></div>
+    <div class="sm mt-2" style="opacity:.85">Web Bluetooth (Chrome/Edge): you pick each device — phones, earbuds, watches, speakers, some cameras & IoT. Distance ≈ from RSSI (rough). Direction is display-only. DEMO = simulated. Real silent Wi-Fi/Bluetooth mass scan is blocked by browsers for privacy.</div></div>
   <div class="lg:col-span-5 flex flex-col gap-2">
     <div class="box"><div class="ttl"><span>Devices</span><span id="mrCnt" style="color:var(--c)">0</span></div><div id="mrList" class="sm flex flex-col gap-1" style="max-height:30vh;overflow:auto"></div></div>
     <div class="box"><div class="ttl"><span>Inspect</span><span id="mrIn" style="color:var(--c)">--</span></div><div id="mrDet" class="sm flex flex-col gap-1">Press INSPECT on a device.</div></div>
@@ -204,7 +215,7 @@ addEventListener('mousemove',e=>{
   $('magV').textContent=m.toFixed(1);$('angV').textContent=((Math.atan2(dy,dx)*180/Math.PI+360)%360).toFixed(1)+'°';
   
   trace.push({x:e.clientX/innerWidth*xy.width,y:e.clientY/innerHeight*xy.height});if(trace.length>25)trace.shift()});
-function drawXy(){rsXy();xc.clearRect(0,0,xy.width,xy.height);xc.strokeStyle='rgba(0,238,255,.2)';xc.beginPath();
+function drawXy(){if(document.hidden)return;rsXy();xc.clearRect(0,0,xy.width,xy.height);xc.strokeStyle='rgba(0,238,255,.2)';xc.beginPath();
   xc.moveTo(0,xy.height/2);xc.lineTo(xy.width,xy.height/2);xc.moveTo(xy.width/2,0);xc.lineTo(xy.width/2,xy.height);xc.stroke();
   if(trace.length>1){xc.beginPath();trace.forEach((p,i)=>i?xc.lineTo(p.x,p.y):xc.moveTo(p.x,p.y));xc.strokeStyle='rgba(0,238,255,.9)';xc.lineWidth=1.5;xc.stroke()}}
 
@@ -254,7 +265,7 @@ setInterval(()=>{ // event-loop lag + micro-benchmark
   $('cpuPct').style.color=cpuSm>70?'var(--r)':cpuSm>35?'var(--y)':'var(--g)';
   coreV.forEach((v,i)=>{const t=clamp(cpuSm*(i===0?1.15:.6+Math.random()*.6),0,100);coreV[i]+=(t-v)*.4;
     const e=$('cb'+i);e.style.width=coreV[i]+'%';e.style.background=coreV[i]>70?'var(--r)':coreV[i]>35?'var(--y)':'var(--g)'})},200);
-function drawCpu(){const w=cpuC.width=cpuC.clientWidth,h=cpuC.height=cpuC.clientHeight;cx2.clearRect(0,0,w,h);
+function drawCpu(){if(document.hidden)return;const w=cpuC.width=cpuC.clientWidth,h=cpuC.height=cpuC.clientHeight;cx2.clearRect(0,0,w,h);
   cx2.beginPath();cpuHist.forEach((v,i)=>{const x=i/59*w,y=h-v/100*h;i?cx2.lineTo(x,y):cx2.moveTo(x,y)});
   cx2.strokeStyle='#00ff66';cx2.lineWidth=1.5;cx2.shadowColor='#00ff66';cx2.shadowBlur=6;cx2.stroke();cx2.shadowBlur=0;
   frames++;const n=performance.now();if(n-drawCpu.t>=1000){fps=frames;frames=0;drawCpu.t=n;$('cpuFps').textContent=fps}}
@@ -265,19 +276,35 @@ const wf=$('wfC'),wx=wf.getContext('2d');let wAng=0,aps=[],ping=null,off=!naviga
 const names=['HomeNet_5G','CORE-MESH','Guest_Open','IoT_Hub','Neighbor_24','Cafe_WiFi','Drone-Link'];
 names.forEach(n=>aps.push({n,a:Math.random()*6.28,d:.25+Math.random()*.7,s:-40-Math.random()*45,lit:0}));
 const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-function netInfo(){off=!navigator.onLine;
-  $('wfLink').textContent=off?'OFFLINE':'ONLINE';$('wfLink').style.color=off?'var(--r)':'var(--c)';
-  $('wfType').textContent=conn?(conn.type||conn.effectiveType||'n/a').toUpperCase():'n/a';
-  $('wfDown').textContent=conn&&conn.downlink?conn.downlink+' Mb/s':'n/a';
-  $('wfRtt').textContent=off?'--':(ping!==null?ping+' ms':conn&&conn.rtt!=null?conn.rtt+' ms':'n/a');
-  $('wifiSt').textContent=off?'OFF-RADAR':'LOCKED';$('wifiSt').style.color=off?'var(--r)':'var(--c)';
-  $('netChip').innerHTML=off?'<span style="color:var(--r)">NET: OFF-RADAR</span>':'NET: '+(conn&&conn.effectiveType?conn.effectiveType.toUpperCase():'ONLINE')}
-async function doPing(){if(!navigator.onLine)return netInfo();try{const t=performance.now();await fetch(location.href,{method:'HEAD',cache:'no-store'});ping=Math.round(performance.now()-t)}catch(e){ping=null}netInfo()}
-addEventListener('online',()=>{log('WI-FI LINK RESTORED. BACK ON RADAR.','s');netInfo()});
-addEventListener('offline',()=>{log('WI-FI LINK LOST. OFF-RADAR.','d');netInfo()});
-conn&&conn.addEventListener&&conn.addEventListener('change',netInfo);
-setInterval(doPing,5000);doPing();
-function drawWifi(){const w=wf.width=wf.clientWidth,h=wf.height=wf.clientHeight,cx=w/2,cy=h/2,r=Math.min(w,h)/2-8,col=off?'255,0,60':'0,238,255';
+function netInfo(){
+  off=!navigator.onLine;
+  const el=id=>{const e=$(id);return e};
+  if(el('wfLink')){el('wfLink').textContent=off?'OFFLINE':'ONLINE';el('wfLink').style.color=off?'var(--r)':'var(--c)'}
+  if(el('wfType'))el('wfType').textContent=conn?(conn.type||'unknown').toUpperCase():'n/a';
+  if(el('wfEff'))el('wfEff').textContent=conn&&conn.effectiveType?(conn.effectiveType+'').toUpperCase():'n/a';
+  if(el('wfDown'))el('wfDown').textContent=conn&&conn.downlink!=null?conn.downlink+' Mb/s':'n/a';
+  if(el('wfRtt'))el('wfRtt').textContent=off?'--':(ping!==null?ping+' ms':conn&&conn.rtt!=null?conn.rtt+' ms':'n/a');
+  if(el('wfSave'))el('wfSave').textContent=conn&&conn.saveData?'ON':'off';
+  if(el('wifiSt')){el('wifiSt').textContent=off?'OFFLINE':'LIVE LINK';el('wifiSt').style.color=off?'var(--r)':'var(--g)'}
+  const nc=$('netChip');if(nc)nc.textContent='NET: '+(off?'DOWN':'UP')+(conn&&conn.effectiveType?' · '+conn.effectiveType.toUpperCase():'');
+}
+
+async function wifiPing(){
+  if(document.hidden)return;
+  if(!navigator.onLine){ping=null;netInfo();return}
+  try{
+    const t=performance.now();
+    await fetch(location.href.split('#')[0],{method:'HEAD',cache:'no-store'});
+    ping=Math.round(performance.now()-t);
+  }catch(e){ping=null}
+  netInfo();
+}
+setInterval(wifiPing,2500);wifiPing();
+addEventListener('online',()=>{log('LINK RESTORED — back on radar','s');netInfo();wifiPing()});
+addEventListener('offline',()=>{log('LINK LOST — offline','d');netInfo()});
+if(conn&&conn.addEventListener)conn.addEventListener('change',netInfo);
+
+function drawWifi(){if(!wf||document.hidden)return;const w=wf.clientWidth,h=wf.clientHeight;if(w<10||h<10)return;wf.width=w;wf.height=h;const cx=w/2,cy=h/2,r=Math.min(w,h)/2-8,col=off?'255,0,60':'0,238,255';
   wx.clearRect(0,0,w,h);wx.strokeStyle=`rgba(${col},.3)`;
   for(let i=1;i<=4;i++){wx.beginPath();wx.arc(cx,cy,r*i/4,0,7);wx.stroke()}
   wx.beginPath();wx.moveTo(cx-r,cy);wx.lineTo(cx+r,cy);wx.moveTo(cx,cy-r);wx.lineTo(cx,cy+r);wx.stroke();
@@ -293,7 +320,7 @@ function drawWifi(){const w=wf.width=wf.clientWidth,h=wf.height=wf.clientHeight,
 /* ---------- Error ranging ---------- */
 const bandsDef=[['LOW',0,3,'var(--g)'],['MED',4,6,'var(--y)'],['HIGH',7,8,'#ff7a00'],['CRIT',9,10,'var(--r)']];
 let errs=[];const t0=Date.now();
-bandsDef.forEach(([n,a,b,c])=>$('bands').insertAdjacentHTML('beforeend',`<div><div class="flex justify-between"><span>${n} [${a}-${b}]</span><b id="bn${n}">0</b></div><div class="bar"><i id="bb${n}" style="width:0;background:${c};box-shadow:0 0 8px ${c}"></i></div></div>`));
+/* bands UI removed */
 function severity(e){const n=e&&e.name||'';return n==='SyntaxError'?9:n==='ReferenceError'||n==='TypeError'?7:n==='RangeError'?6:n==='InjectedFault'?(Math.random()*10|0)+1:4}
 function recordError(e,src){if(safe){log('SAFE MODE: error contained → '+(e&&e.message||e),'s');return}const sev=severity(e);errs.push({t:Date.now(),sev,msg:(e&&e.message||String(e))});if(errs.length>200)errs.shift();
   log(`ERR[${src}] sev=${sev} ${e&&e.name||'Error'}: ${e&&e.message||e}`,'d');renderErrs();
@@ -409,9 +436,34 @@ function toggleFs(){if(FS.keep){FS.keep=false;try{localStorage.setItem('sc_fs','
   else{FS.keep=true;try{localStorage.setItem('sc_fs','1')}catch(e){}enterFs();log('Fullscreen: ON. If the browser blocks it, tap once more.','s')}fsUi()}
 document.addEventListener('fullscreenchange',fsUi);document.addEventListener('webkitfullscreenchange',fsUi);
 addEventListener('pointerdown',enterFs,true);addEventListener('keydown',e=>{if(e.key!=='Escape')enterFs()},true);
-function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('sc_theme',t)}catch(e){}$('thBtn').textContent='THEME: '+(t==='mono'?'B&W':'GREEN');const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='mono'?'#000000':'#010409'}
-function toggleTheme(){setTheme(document.documentElement.dataset.theme==='mono'?'green':'mono')}
-setTheme((()=>{try{return localStorage.getItem('sc_theme')==='mono'?'mono':'green'}catch(e){return'green'}})());
+
+const THEMES=['green','purple','red','mono'];
+const THEME_LABEL={green:'GREEN',purple:'PURPLE',red:'RED',mono:'MONO'};
+function setTheme(t){
+  if(!THEMES.includes(t))t='green';
+  document.documentElement.dataset.theme=t;
+  document.documentElement.style.filter=t==='mono'?'grayscale(1) brightness(1.18) contrast(1.12)':'';
+  const b=$('thBtn');if(b)b.textContent='THEME: '+THEME_LABEL[t];
+  try{localStorage.setItem('sc_theme',t)}catch(e){}
+  const vars={
+    green:{g:'#00ff66',c:'#00eeff',r:'#ff003c',y:'#fbbf24'},
+    purple:{g:'#c084fc',c:'#e879f9',r:'#f472b6',y:'#f0abfc'},
+    red:{g:'#ff3355',c:'#ff6b8a',r:'#ff003c',y:'#ffaa00'},
+    mono:{g:'#ededed',c:'#ffffff',r:'#ffffff',y:'#cfcfcf'}
+  }[t];
+  if(vars){Object.entries(vars).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v))}
+  const m=document.querySelector('meta[name=theme-color]');
+  if(m)m.content=t==='mono'?'#000000':t==='red'?'#1a0005':t==='purple'?'#120018':'#010409';
+}
+function toggleTheme(){
+  const cur=document.documentElement.dataset.theme||'green';
+  const i=THEMES.indexOf(cur);
+  setTheme(THEMES[(i+1)%THEMES.length]);
+}
+setTheme((()=>{try{const t=localStorage.getItem('sc_theme');return THEMES.includes(t)?t:'green'}catch(e){return'green'}})());
+
+
+
 
 /* ---------- Safe mode ---------- */
 let safe=false;
@@ -431,7 +483,7 @@ function restart(){if(rb)return;rb=true;const ms=2000+Math.random()*3000;$('boot
     while(n<L.length&&p>=n/L.length){$('bootL').insertAdjacentHTML('beforeend',`<div>> ${L[n]}… OK</div>`);n++}
     if(p>=1){clearInterval(iv);finishRestart(ms)}},80)}
 function finishRestart(ms){tick=0;try{const a=$('rnTicks');if(a)a.textContent=0;const o=$('out');if(o)o.innerHTML='';const c=$('con');if(c)c.innerHTML=''}catch(e){}resetErrs();
-  unlock(1);running=true;$('rnBtn').textContent='PAUSE';/* Code Space auto-start disabled */
+  unlock(1);running=false;
   if(safe)$('statusBadge').textContent='STATUS: SAFE MODE ACTIVE // ALL SYSTEMS NOMINAL';
   $('boot').style.display='none';rb=false;log(`RESTART COMPLETE in ${(ms/1000).toFixed(1)}s. ALL SYSTEMS NOMINAL.`,'s')}
 
@@ -449,12 +501,19 @@ function reboot(){$('dead').style.display='none';document.querySelectorAll('head
   files={...defFiles};persist();cur=null;$('fvName').textContent='–';$('fvText').value='';renderFiles();restart()}
 
 /* ---------- Tabs ---------- */
-function showTab(n){['Dash','Files','Search','Term','Planet','Notes','Net','Radar'].forEach(k=>{$('t'+k).style.display=k===n?'':'none';$('tb'+k).style.background=k===n?'var(--g)':'';$('tb'+k).style.color=k===n?'#000':''});
-  if(n==='Dash'){rsPl();rsXy()}if(n==='Notes')$('nt').focus();if(n==='Search')$('sq').focus();if(n==='Term')$('ti').focus()}
+function showTab(n){
+  const tabs=['Dash','Files','Planet','Net','Radar'];
+  tabs.forEach(k=>{
+    const p=$('t'+k), b=$('tb'+k);
+    if(p)p.style.display=k===n?'':'none';
+    if(b){b.style.background=k===n?'var(--g)':'';b.style.color=k===n?'#000':''}
+  });
+  // hide removed tabs if still in DOM
+  ['Search','Term','Notes'].forEach(k=>{const p=$('t'+k);if(p)p.style.display='none'});
+  if(n==='Dash'){try{rsPl();rsXy()}catch(e){}}
+  if(typeof pm!=='undefined')pm.dirty=true;
+}
 
-/* ---------- Search.exe ---------- */
-const kb=[['CPU Detector','Main-thread load, cores, FPS','Dash'],['Wi-Fi Off-Radar','Link state, ping, simulated APs','Dash'],['File Scan','Scan vault and local device files','Dash'],['File Vault','Open, save, delete files','Files'],['Safe Mode','Contain errors, lock override','Dash'],['Restart','2-5 second reboot','Dash'],['Emergency Shutdown','Destroy all (simulated)','Dash'],['Planet Radar','Starfield globe and zones','Dash'],['Terminal.app','Command line: ls, cat, run, cpu, net…','Term'],['Startup','Zack Engine 30s boot sequence','Dash'],['PC & Net','PC info, ping, jitter, speed test','Net'],['States / provinces','Pick any state on the 2D map','Planet'],['Maps 2D / Globe 3D','Real Earth map, zoom, search, Google Maps link','Planet'],['Notes','Write and save text notes','Notes'],['Files','Open, edit, save, delete vault files','Files'],['Breach simulation','Fake hack popups, type 4625 to stop','Dash'],['Keep awake','Stops the screen from sleeping','Dash'],['Mobile radar','Nearby Bluetooth phones, brand, distance, inspect','Radar'],['Theme','Green or black and white','Dash']];
-let sr=[];const esc=x=>x.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 function doSearch(){const raw=$('sq').value.trim(),q=raw.toLowerCase();sr=[];$('sweb').href='https://duckduckgo.com/?q='+encodeURIComponent(raw);
   if(!q){$('sres').innerHTML='<div style="opacity:.5">Type to search…</div>';return}
   Object.keys(files).forEach(k=>{const c=files[k],i=c.toLowerCase().indexOf(q);if(k.toLowerCase().includes(q)||i>=0)sr.push({t:'FILE',h:k,b:i>=0?c.slice(Math.max(0,i-30),i+60):'(name match)',go:()=>{showTab('Files');openFile(k)}})});
@@ -747,7 +806,7 @@ try{$('nt').value=localStorage.getItem('sc_draft')||''}catch(e){}noteCount();ren
 function fz(d){const c=document.documentElement,v=clamp((parseFloat(getComputedStyle(c).fontSize)||17)+d*1.5,12,26);c.style.fontSize=v+'px';try{localStorage.setItem('sc_fz',v)}catch(e){}}
 try{const z=localStorage.getItem('sc_fz');if(z)document.documentElement.style.fontSize=z+'px'}catch(e){}
 const NQ={rtt:[],down:null},PC={};
-async function pingOnce(){const t=performance.now();try{await fetch(location.href.split('#')[0],{method:'HEAD',cache:'no-store'});const d=performance.now()-t;NQ.rtt.push(d);ping=Math.round(d)}catch(e){NQ.rtt.push(null)}if(NQ.rtt.length>60)NQ.rtt.shift()}
+async function pingOnce(){if(document.hidden)return;const t=performance.now();try{await fetch(location.href.split('#')[0],{method:'HEAD',cache:'no-store'});const d=performance.now()-t;NQ.rtt.push(d);ping=Math.round(d)}catch(e){NQ.rtt.push(null)}if(NQ.rtt.length>60)NQ.rtt.shift()}
 setInterval(pingOnce,2000);pingOnce();
 function nqStats(){const v=NQ.rtt.filter(x=>x!=null),n=NQ.rtt.length;if(!v.length)return null;const avg=v.reduce((a,b)=>a+b,0)/v.length;let j=0;for(let i=1;i<v.length;i++)j+=Math.abs(v[i]-v[i-1]);j/=Math.max(1,v.length-1);
   const loss=(n-v.length)/n*100;return{avg,max:Math.max(...v),j,loss,sc:clamp(100-clamp((avg-20)/3,0,50)-clamp(j*1.5,0,25)-loss*3,0,100)}}
@@ -824,7 +883,7 @@ async function mrInspect(d){if(!d)return mrMsg('No device with a signal to inspe
   const show=r=>{$('mrDet').innerHTML=r.map(x=>`<div class="flex justify-between gap-2" style="border-bottom:1px solid rgba(0,255,102,.2)"><span style="opacity:.85">${x[0]}</span><b style="color:var(--c);text-align:right;word-break:break-word">${esc(String(x[1]))}</b></div>`).join('')};
   show(d.demo?rows.concat([['Note','Simulated device for demonstration']]):rows.concat([['GATT','reading device details...']]));
   if(!d.demo){const g=await gattInfo(d),m=g.find(x=>x[0]==='Manufacturer');if(m)d.gb=m[1];show(rows.concat(g))}}
-function drawMr(){if($('tRadar').style.display==='none')return;const c=$('mrC');fitC(c);const g=c.getContext('2d'),w=c.width,h=c.height,cx=w/2,cy=h/2,R=Math.min(w,h)/2-22,cl=mrClosest(),rOf=d=>R*Math.log10(1+Math.min(d,30))/Math.log10(31);
+function drawMr(){if(document.hidden)return;if($('tRadar').style.display==='none')return;const c=$('mrC');fitC(c);const g=c.getContext('2d'),w=c.width,h=c.height,cx=w/2,cy=h/2,R=Math.min(w,h)/2-22,cl=mrClosest(),rOf=d=>R*Math.log10(1+Math.min(d,30))/Math.log10(31);
   g.clearRect(0,0,w,h);g.font='13px "Share Tech Mono",monospace';g.textAlign='center';
   [1,3,10,30].forEach(m=>{const r=rOf(m);g.strokeStyle='rgba(0,238,255,.35)';g.lineWidth=1;g.beginPath();g.arc(cx,cy,r,0,7);g.stroke();g.fillStyle='rgba(159,255,196,.9)';g.fillText(m+' m',cx,cy-r+14)});
   g.strokeStyle='rgba(0,238,255,.2)';g.beginPath();g.moveTo(cx-R,cy);g.lineTo(cx+R,cy);g.moveTo(cx,cy-R);g.lineTo(cx,cy+R);g.stroke();
@@ -837,7 +896,26 @@ function drawMr(){if($('tRadar').style.display==='none')return;const c=$('mrC');
 setInterval(()=>{MR.devs.forEach((d,i)=>{if(d.demo){d.rssi=d.base+Math.sin(Date.now()/2500+i)*5;d.seen=Date.now()}});if($('tRadar').style.display!=='none')mrRender()},1000);
 
 /* ---------- main render loop ---------- */
-(function loop(){if(!document.hidden){if($('tDash').style.display!=='none'){drawXy();drawPlanet();drawWifi()}drawCpu();drawMr()}requestAnimationFrame(loop)})();
+let _raf=0;
+function loop(){
+  if(document.hidden){_raf=requestAnimationFrame(loop);return}
+  try{
+    if($('tDash')&&$('tDash').style.display!=='none'){drawXy();drawPlanet();drawWifi()}
+    drawCpu();
+    if($('tRadar')&&$('tRadar').style.display!=='none')drawMr();
+    if($('tPlanet')&&$('tPlanet').style.display!=='none')drawPm();
+  }catch(e){}
+  _raf=requestAnimationFrame(loop);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    // pause heavy work
+  }else{
+    // resume — force one dirty redraw
+    if(typeof pm!=='undefined')pm.dirty=true;
+  }
+});
+loop();
 netInfo();
 </script>
 </body>
